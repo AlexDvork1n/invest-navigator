@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Инвестиционный навигатор 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #0A0D12;
+    --bg2: #111520;
+    --bg3: #171C28;
+    --card: #141824;
+    --card2: #1C2235;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --gold: #C9A84C;
+    --gold2: #E8C96A;
+    --gold-dim: rgba(201,168,76,0.12);
+    --gold-dim2: rgba(201,168,76,0.22);
+    --text: #F0EDE8;
+    --text2: #9BA3B4;
+    --text3: #5C6478;
+    --green: #4CAF7D;
+    --green-bg: rgba(76,175,125,0.1);
+    --amber: #E8944A;
+    --amber-bg: rgba(232,148,74,0.1);
+    --red: #E85D5D;
+    --red-bg: rgba(232,93,93,0.1);
+    --blue: #5B9BD5;
+    --blue-bg: rgba(91,155,213,0.1);
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 800px 600px at 20% 10%, rgba(201,168,76,0.04) 0%, transparent 70%),
+      radial-gradient(ellipse 600px 500px at 80% 80%, rgba(91,155,213,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    padding: 56px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+
+  .header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .logo-area h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .logo-area h1 span {
+    color: var(--gold);
+  }
+
+  .logo-area p {
+    margin-top: 10px;
+    color: var(--text2);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  .macro-strip {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .macro-item {
+    text-align: right;
+  }
+
+  .macro-item .m-label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+
+  .macro-item .m-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .macro-item .m-val.down { color: var(--green); }
+  .macro-item .m-val.up { color: var(--amber); }
+  .macro-item .m-val.neutral { color: var(--blue); }
+
+  .macro-item .m-trend {
+    font-size: 10px;
+    color: var(--text3);
+  }
+
+  /* INPUTS SECTION */
+  .section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .inputs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 700px) {
+    .inputs-grid { grid-template-columns: 1fr; }
+    .logo-area h1 { font-size: 28px; }
+    .macro-strip { display: none; }
+    .results-grid { grid-template-columns: 1fr !important; }
+    .alloc-ring { flex-direction: column; }
+  }
+
+  .input-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+
+  .input-card:hover, .input-card:focus-within {
+    border-color: var(--border2);
+  }
+
+  .input-card label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text2);
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+
+  .input-card .icon {
+    font-size: 22px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .input-wrapper {
+    position: relative;
+  }
+
+  .prefix {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    pointer-events: none;
+  }
+
+  input[type="number"], input[type="range"] {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    padding: 12px 14px 12px 36px;
+    outline: none;
+    appearance: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input[type="number"]:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px var(--gold-dim);
+  }
+
+  input[type="number"]::-webkit-inner-spin-button { display: none; }
+
+  input[type="range"] {
+    padding: 0;
+    height: 4px;
+    background: var(--bg3);
+    border: none;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 4px var(--gold-dim2);
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+  }
+
+  input[type="range"]:hover::-webkit-slider-thumb {
+    box-shadow: 0 0 0 6px var(--gold-dim2);
+  }
+
+  .range-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .range-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .range-desc {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 6px;
+  }
+
+  .activity-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .act-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    text-align: left;
+    transition: all 0.15s;
+  }
+
+  .act-btn:hover { border-color: var(--border2); color: var(--text); }
+
+  .act-btn.active {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+    color: var(--gold2);
+  }
+
+  .act-btn .act-icon { font-size: 16px; flex-shrink: 0; }
+  .act-btn .act-label { font-weight: 500; }
+  .act-btn .act-hint { font-size: 11px; color: var(--text3); display: block; }
+  .act-btn.active .act-hint { color: rgba(201,168,76,0.6); }
+
+  /* CTA BUTTON */
+  .cta-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0 52px;
+  }
+
+  .cta-btn {
+    background: var(--gold);
+    color: #0A0D12;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 16px 48px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background 0.2s;
+  }
+
+  .cta-btn:hover { background: var(--gold2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
+  .cta-btn:active { transform: translateY(0); }
+
+  /* RESULTS */
+  #results { display: none; animation: fadeUp 0.5s ease; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border2), transparent);
+    margin: 0 0 48px;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  /* Allocation card */
+  .alloc-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+  }
+
+  .alloc-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .alloc-card .sub {
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 24px;
+  }
+
+  .chart-wrap {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 24px;
+  }
+
+  .chart-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .chart-center .c-age {
+    font-family: 'DM Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .chart-center .c-label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  .alloc-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .legend-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-right: 8px;
+  }
+
+  .legend-name {
+    font-size: 13px;
+    color: var(--text2);
+    flex: 1;
+  }
+
+  .legend-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .legend-amount {
+    font-size: 11px;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+    margin-top: 2px;
+    text-align: right;
+  }
+
+  /* Profile card */
+  .profile-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .profile-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .profile-card .sub {
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 24px;
+  }
+
+  .profile-summary {
+    background: var(--bg3);
+    border-radius: var(--radius-sm);
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    border-left: 3px solid var(--gold);
+  }
+
+  .profile-summary p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--text2);
+  }
+
+  .profile-summary strong {
+    color: var(--gold2);
+    font-weight: 500;
+  }
+
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .tag {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+
+  .tag-green { background: var(--green-bg); color: var(--green); border-color: rgba(76,175,125,0.25); }
+  .tag-amber { background: var(--amber-bg); color: var(--amber); border-color: rgba(232,148,74,0.25); }
+  .tag-red { background: var(--red-bg); color: var(--red); border-color: rgba(232,93,93,0.25); }
+  .tag-blue { background: var(--blue-bg); color: var(--blue); border-color: rgba(91,155,213,0.25); }
+  .tag-gold { background: var(--gold-dim); color: var(--gold2); border-color: rgba(201,168,76,0.25); }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .stat-box {
+    background: var(--bg2);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+  }
+
+  .stat-box .sb-label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .stat-box .sb-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .stat-box .sb-sub {
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 3px;
+  }
+
+  /* Instruments */
+  .instruments-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .instruments-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .filter-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ftab {
+    padding: 5px 14px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--text2);
+    cursor: pointer;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .ftab:hover { border-color: var(--border2); color: var(--text); }
+  .ftab.active { border-color: var(--gold); background: var(--gold-dim); color: var(--gold2); }
+
+  .instruments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 60px;
+  }
+
+  .instr-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 18px;
+    align-items: center;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: default;
+  }
+
+  .instr-card:hover {
+    border-color: var(--border2);
+    background: var(--card2);
+  }
+
+  .instr-card.top-pick {
+    border-color: rgba(201,168,76,0.3);
+  }
+
+  .instr-rank {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .instr-rank.gold-rank { color: var(--gold); font-weight: 500; }
+
+  .instr-body {}
+
+  .instr-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+  }
+
+  .instr-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-low { background: var(--green-bg); color: var(--green); }
+  .badge-mid { background: var(--amber-bg); color: var(--amber); }
+  .badge-high { background: var(--red-bg); color: var(--red); }
+  .badge-passive { background: var(--blue-bg); color: var(--blue); }
+  .badge-mixed { background: rgba(140,110,200,0.12); color: #A07EE8; }
+  .badge-active { background: rgba(200,100,100,0.12); color: #E07878; }
+  .badge-hot { background: rgba(201,168,76,0.15); color: var(--gold2); }
+
+  .instr-comment {
+    font-size: 12.5px;
+    color: var(--text3);
+    line-height: 1.5;
+  }
+
+  .instr-right {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .instr-yield {
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--green);
+  }
+
+  .instr-cap {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 3px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .instr-alloc {
+    font-size: 11px;
+    color: var(--gold);
+    margin-top: 5px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px;
+    color: var(--text3);
+  }
+
+  .empty-state .e-icon { font-size: 36px; margin-bottom: 12px; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    text-align: center;
+  }
+
+  footer p {
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.7;
+  }
+
+  footer a { color: var(--text3); text-decoration: underline; }
+
+  /* Disclaimer banner */
+  .disclaimer {
+    background: rgba(232,148,74,0.07);
+    border: 1px solid rgba(232,148,74,0.2);
+    border-radius: var(--radius-sm);
+    padding: 12px 18px;
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  .disclaimer strong { color: var(--amber); }
+
+  /* Score bar */
+  .score-bar-wrap {
+    margin-top: 6px;
+  }
+
+  .score-bar {
+    height: 3px;
+    background: var(--bg3);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 5px;
+  }
+
+  .score-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--gold);
+    transition: width 0.8s ease;
+  }
+
+  /* Animated number */
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .anim { animation: countUp 0.4s ease; }
+
+  .sep { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* Show all button */
+  .show-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.2px;
+  }
+
+  .show-all-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold2);
+    background: var(--gold-dim);
+  }
+
+  .show-all-btn #show-all-icon {
+    font-size: 18px;
+    line-height: 1;
+    transition: transform 0.3s;
+    font-style: normal;
+  }
+
+  .show-all-btn.expanded #show-all-icon {
+    transform: rotate(45deg);
+  }
+
+  .sab-count {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 8px;
+    color: var(--text3);
+  }
+
+  .show-all-btn:hover .sab-count {
+    border-color: rgba(201,168,76,0.3);
+    color: var(--gold);
+    background: var(--gold-dim);
+  }
+
+  .all-section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text3);
+    font-weight: 500;
+    margin: 32px 0 14px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  .instr-card.grayed {
+    opacity: 0.65;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .all-extra { animation: slideDown 0.35s ease; }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <div class="logo-area">
+        <h1>Инвест<span>навигатор</span></h1>
+        <p>Персональный подбор стратегий · Данные актуальны на март 2026</p>
+      </div>
+      <div class="macro-strip">
+        <div class="macro-item">
+          <div class="m-label">Ставка ЦБ</div>
+          <div class="m-val down">15.5%</div>
+          <div class="m-trend">↓ с пика 21%</div>
+        </div>
+        <div class="macro-item">
+          <div class="m-label">Прогноз к концу 2026</div>
+          <div class="m-val down">12–14%</div>
+          <div class="m-trend">след. заседание 20 марта</div>
+        </div>
+        <div class="macro-item">
+          <div class="m-label">Индекс МосБиржи</div>
+          <div class="m-val neutral">~2850</div>
+          <div class="m-trend">↑ +4.7% за месяц</div>
+        </div>
+        <div class="macro-item">
+          <div class="m-label">Золото</div>
+          <div class="m-val up">$3000+</div>
+          <div class="m-trend">исторические максимумы</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- INPUTS -->
+  <div class="section-label">Шаг 1 — Расскажите о себе</div>
+  <div class="inputs-grid">
+
+    <!-- Сумма инвестиций -->
+    <div class="input-card">
+      <span class="icon">₽</span>
+      <label for="amount">Сумма инвестиций</label>
+      <div class="input-wrapper">
+        <span class="prefix">₽</span>
+        <input type="number" id="amount" value="300000" min="1000" step="10000">
+      </div>
+      <div class="range-desc" id="amount-hint" style="margin-top:8px"></div>
+    </div>
+
+    <!-- Возраст -->
+    <div class="input-card">
+      <span class="icon">⌛</span>
+      <label>Ваш возраст</label>
+      <input type="range" id="age" min="18" max="80" value="35" step="1">
+      <div class="range-row">
+        <div>
+          <div class="range-val" id="age-val">35</div>
+          <div class="range-desc" id="age-desc"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Активность -->
+    <div class="input-card">
+      <span class="icon">⏱</span>
+      <label>Время на инвестиции</label>
+      <div class="activity-options">
+        <button class="act-btn" data-val="passive">
+          <span class="act-icon">😴</span>
+          <div>
+            <span class="act-label">Менее 2 ч/нед</span>
+            <span class="act-hint">Только пассивные стратегии</span>
+          </div>
+        </button>
+        <button class="act-btn active" data-val="mixed">
+          <span class="act-icon">🧩</span>
+          <div>
+            <span class="act-label">2–8 ч/нед</span>
+            <span class="act-hint">Пассивные + смешанные</span>
+          </div>
+        </button>
+        <button class="act-btn" data-val="active">
+          <span class="act-icon">⚡</span>
+          <div>
+            <span class="act-label">8+ ч/нед</span>
+            <span class="act-hint">Все стратегии, включая активные</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="cta-wrap">
+    <button class="cta-btn" onclick="calculate()">Подобрать стратегии →</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results">
+    <div class="divider"></div>
+    <div class="section-label">Шаг 2 — Ваш инвестиционный профиль</div>
+
+    <div class="disclaimer">
+      <strong>Дисклеймер:</strong> данные носят информационный характер и не являются индивидуальной инвестиционной рекомендацией. Доходности указаны на основе актуальных рыночных данных марта 2026. Прошлые результаты не гарантируют будущих.
+    </div>
+
+    <div class="results-grid">
+      <!-- Allocation Chart -->
+      <div class="alloc-card">
+        <h3>Распределение капитала</h3>
+        <p class="sub">По уровню риска согласно вашему возрасту</p>
+        <div class="chart-wrap">
+          <canvas id="allocChart"></canvas>
+          <div class="chart-center">
+            <div class="c-age" id="chart-age-label">35</div>
+            <div class="c-label">лет</div>
+          </div>
+        </div>
+        <div class="alloc-legend" id="alloc-legend"></div>
+      </div>
+
+      <!-- Profile Summary -->
+      <div class="profile-card">
+        <h3>Профиль инвестора</h3>
+        <p class="sub" id="profile-subtitle"></p>
+        <div class="profile-summary">
+          <p id="profile-text"></p>
+        </div>
+        <div class="tags-row" id="tags-row"></div>
+        <div class="stat-grid" id="stat-grid"></div>
+      </div>
+    </div>
+
+    <!-- Instruments -->
+    <div class="instruments-header">
+      <h2 id="instruments-title">Рекомендованные инструменты</h2>
+      <div class="filter-tabs" id="filter-tabs"></div>
+    </div>
+    <div class="instruments-list" id="instruments-list"></div>
+
+    <!-- Show All Button -->
+    <div id="show-all-wrap" style="display:none;text-align:center;margin:-40px 0 60px;">
+      <button id="show-all-btn" class="show-all-btn" onclick="toggleAllStrategies()">
+        <span id="show-all-icon">⊕</span>
+        <span id="show-all-text">Показать все инвестиционные стратегии</span>
+        <span id="show-all-count" class="sab-count"></span>
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p>
+      Инвестнавигатор 2026 · Данные основаны на актуальных рыночных условиях России<br>
+      Ключевая ставка ЦБ: 15.5% (февраль 2026) · IMOEX: ~2850 пунктов · Золото: $3000+/унция<br>
+      <span style="color:#3a404f">Не является инвестиционной рекомендацией</span>
+    </p>
+  </div>
+</footer>
+
+<script>
+// ===================== DATA =====================
+const INSTRUMENTS = [
+  {
+    id:1, name:"Фонды денежного рынка", cat:"Фондовый рынок",
+    risk:"Low", strat:"Пассивная",
+    yieldLabel:"~15% сейчас", yieldNum:15,
+    cap:1, capLabel:"от 1 ₽",
+    status:"warn", statusLabel:"Теряет позиции",
+    comment:"Доходность автоматически следует за ставкой ЦБ вниз. Лучше депозита по ликвидности — деньги доступны каждый день. Идеальный «кэш-парковщик» на короткий срок.",
+    tags:["Высокая ликвидность","Без минимума","FXMM / LQDT"],
+    score:85
+  },
+  {
+    id:2, name:"Вклады в банке", cat:"Фондовый рынок",
+    risk:"Low", strat:"Пассивная",
+    yieldLabel:"15–17%", yieldNum:16,
+    cap:500, capLabel:"от 500 ₽",
+    status:"warn", statusLabel:"Пик прошёл",
+    comment:"Ставки снижаются вслед за ЦБ. Фиксируйте длинные вклады прямо сейчас — многие банки ещё дают 16–17% на 6–12 месяцев. До 1.4 млн ₽ застрахованы АСВ.",
+    tags:["Застрахованы АСВ","Без риска","Фиксируйте сейчас"],
+    score:80
+  },
+  {
+    id:3, name:"Облигации РФ (длинные ОФЗ)", cat:"Фондовый рынок",
+    risk:"Low", strat:"Пассивная",
+    yieldLabel:"15–17% + рост цены", yieldNum:17,
+    cap:500, capLabel:"от 500 ₽",
+    status:"hot", statusLabel:"Отличный момент",
+    comment:"Цикл снижения ставки = рост цен на длинные ОФЗ. Прогноз БКС: 30%+ доходности в 2026 г. Лучший момент для входа — пока ставка ещё высокая. Покупайте с погашением 5–10 лет.",
+    tags:["Золотое окно 2026","Гос. гарантия","Рост цены при снижении ставки"],
+    score:92
+  },
+  {
+    id:4, name:"ИИС (тип А)", cat:"Фондовый рынок",
+    risk:"Low", strat:"Пассивная",
+    yieldLabel:"13% вычет + 15–17% облиг.", yieldNum:18,
+    cap:400000, capLabel:"от 400 000 ₽/год",
+    status:"ok", statusLabel:"Актуально",
+    comment:"Гарантированный вычет 13% с вложенных до 400к ₽/год + доходность внутри (облигации). При снижении ставки ОФЗ на ИИС вырастут в цене. Горизонт — 3 года.",
+    tags:["Налоговый вычет 13%","Гос. льгота","3 года"],
+    score:88
+  },
+  {
+    id:5, name:"Замещающие облигации (USD)", cat:"Фондовый рынок",
+    risk:"Low", strat:"Пассивная",
+    yieldLabel:"9–11% в USD", yieldNum:10,
+    cap:100000, capLabel:"от ~100 000 ₽",
+    status:"ok", statusLabel:"Валютный хедж",
+    comment:"Валютная защита без иностранных счетов. Выплаты в рублях по курсу ЦБ, купон в долларах. Разумная часть портфеля для защиты от девальвации рубля.",
+    tags:["Валютный доход","Доступно россиянам","Защита от девальвации"],
+    score:75
+  },
+  {
+    id:6, name:"Дивидендные акции РФ", cat:"Фондовый рынок",
+    risk:"Mid", strat:"Смешанная",
+    yieldLabel:"10–14% дивиденды + рост", yieldNum:22,
+    cap:500, capLabel:"от 500 ₽",
+    status:"ok", statusLabel:"Перспективно",
+    comment:"При снижении ставки депозиты теряют привлекательность — капитал перетекает в акции. MOEX с дисконтом 30% к историческим значениям. Полная доходность с дивидендами: 25–30% прогноз 2026.",
+    tags:["Дивиденды 10–14%","Дисконт 30%","MOEX рост"],
+    score:82
+  },
+  {
+    id:7, name:"Ростовые акции РФ", cat:"Фондовый рынок",
+    risk:"Mid", strat:"Смешанная",
+    yieldLabel:"15–40% (сценарный)", yieldNum:25,
+    cap:500, capLabel:"от 500 ₽",
+    status:"ok", statusLabel:"Высокий потенциал",
+    comment:"Бинарный исход: при геополитической деэскалации — возврат к 3300–3500 пунктов IMOEX (+25%). При ухудшении — риск падения к 2600. Только на долгий горизонт.",
+    tags:["Геополитика — ключевой фактор","Долгий горизонт","Высокий потенциал"],
+    score:68
+  },
+  {
+    id:8, name:"Краудлендинг", cat:"Платформы",
+    risk:"Low", strat:"Пассивная",
+    yieldLabel:"13–19%", yieldNum:16,
+    cap:5000, capLabel:"от 5 000 ₽",
+    status:"ok", statusLabel:"Актуально",
+    comment:"Конкурентная доходность при снижении ставки ЦБ. Важно диверсифицировать по 20–30 проектам. Высокая ставка давит на малый бизнес — риск просрочек вырос. Платформы: Jetlend, JetFinance.",
+    tags:["Ежемесячные выплаты","Диверсификация","Jetlend / JetFinance"],
+    score:72
+  },
+  {
+    id:9, name:"Займы под залог недвижимости", cat:"Бизнес",
+    risk:"Low", strat:"Пассивная",
+    yieldLabel:"20–36%", yieldNum:28,
+    cap:1000000, capLabel:"от 1 000 000 ₽",
+    status:"hot", statusLabel:"Окно закрывается",
+    comment:"Лучшее соотношение риск/доходность среди low-risk инструментов. Долг/залог = 1:2. При снижении ставки таких доходностей станет меньше. Использовать сейчас. Нужен надёжный посредник.",
+    tags:["Залог недвижимости 2:1","Высокий доход","Окно 2026"],
+    score:90
+  },
+  {
+    id:10, name:"Займы бизнесу (без залога)", cat:"Бизнес",
+    risk:"Mid", strat:"Пассивная",
+    yieldLabel:"20–40%", yieldNum:30,
+    cap:200000, capLabel:"от 200 000 ₽",
+    status:"warn", statusLabel:"Риски выросли",
+    comment:"Доходность привлекательна, но кредитный риск заёмщика существенно вырос при высокой ставке. Работайте только с проверенными компаниями или через агрегаторы с рейтингом.",
+    tags:["Высокая доходность","Риск просрочки","Срок 1–2 года"],
+    score:60
+  },
+  {
+    id:11, name:"ПИФ/Фонды недвижимости", cat:"Платформы",
+    risk:"Low", strat:"Пассивная",
+    yieldLabel:"10–14%", yieldNum:12,
+    cap:1000, capLabel:"от 1 000 ₽",
+    status:"warn", statusLabel:"Ниже ставки ЦБ",
+    comment:"Пока ставка 15.5% — доходность ПИФов недвижимости проигрывает депозитам. Станет интереснее при снижении ставки к 10–12%. Хорошо как долгосрочная позиция на 3–5 лет.",
+    tags:["Ежемесячные выплаты","Коммерческая недвижимость","Долгосрочно"],
+    score:55
+  },
+  {
+    id:12, name:"Золото (монеты/фонды)", cat:"Платформы",
+    risk:"Low", strat:"Пассивная",
+    yieldLabel:"до 10% + $3000+ / унция", yieldNum:10,
+    cap:5000, capLabel:"от 5 000 ₽",
+    status:"hot", statusLabel:"Исторические максимумы",
+    comment:"Золото пробило $3000/унция в 2026. Лучший защитный актив от геополитики и девальвации рубля. GLDRUB_TOM на Мосбирже или монеты «Георгий Победоносец». Часть любого портфеля.",
+    tags:["$3000+ / унция","Защита от девальвации","Ликвидно"],
+    score:78
+  },
+  {
+    id:13, name:"Гаражи в аренду", cat:"Малая недвижимость",
+    risk:"Mid", strat:"Смешанная",
+    yieldLabel:"30–35%", yieldNum:32,
+    cap:40000, capLabel:"от 40 000 ₽",
+    status:"ok", statusLabel:"Актуально",
+    comment:"Один из редких инструментов с 30%+ доходностью при умеренном риске. Не зависит от ставки ЦБ — чисто операционный доход. Металлические гаражи — риск сноса. Кирпичные — надёжнее.",
+    tags:["30–35% годовых","Не зависит от ЦБ","Низкий порог"],
+    score:76
+  },
+  {
+    id:14, name:"Кладовки в аренду", cat:"Малая недвижимость",
+    risk:"Mid", strat:"Смешанная",
+    yieldLabel:"15–20%", yieldNum:17,
+    cap:250000, capLabel:"от 250 000 ₽",
+    status:"ok", statusLabel:"Стабильно",
+    comment:"Стабильный операционный доход. Рост арендных ставок +10–15% в 2026 поддерживает доходность. Права собственности в ЕГРН. Хорошо для диверсификации небольших сумм.",
+    tags:["Право собственности","Ежемесячный доход","Рост аренды 2026"],
+    score:70
+  },
+  {
+    id:15, name:"Стейкинг криптовалют (blue chips)", cat:"Крипто",
+    risk:"Mid", strat:"Пассивная",
+    yieldLabel:"5–15% в USD", yieldNum:10,
+    cap:500, capLabel:"от 500 ₽",
+    status:"ok", statusLabel:"Легализуется",
+    comment:"Россия использует крипту для международных расчётов — тренд на легализацию. Стейкинг ETH, BNB на проверенных платформах даёт 5–12% годовых в USD. Только blue chips.",
+    tags:["Доход в USD","Легализация в РФ","ETH / BNB"],
+    score:62
+  },
+  {
+    id:16, name:"Покупка крипты (HODL)", cat:"Крипто",
+    risk:"High", strat:"Смешанная",
+    yieldLabel:"30–400%", yieldNum:80,
+    cap:500, capLabel:"от 500 ₽",
+    status:"ok", statusLabel:"BTC на максимумах",
+    comment:"BTC на исторических максимумах в 2026. Легализация крипты в РФ снижает риски. Только BTC и ETH для начинающих. Не более 10–15% портфеля. Волатильность высокая.",
+    tags:["BTC / ETH","Высокая волатильность","Легализация в РФ"],
+    score:58
+  },
+  {
+    id:17, name:"Новостройки (ранний этап)", cat:"Недвижимость",
+    risk:"Mid", strat:"Активная",
+    yieldLabel:"15–60%", yieldNum:30,
+    cap:500000, capLabel:"от 500 000 ₽",
+    status:"warn", statusLabel:"Осторожно",
+    comment:"Рынок в стагнации. Ипотека 17–20% ограничивает покупательский спрос. Только ликвидные объекты в топ-локациях с большим дисконтом. Цены застройщика растут, но перепродать сложнее.",
+    tags:["Стагнация рынка","Ликвидность упала","Дорогая ипотека"],
+    score:45
+  },
+  {
+    id:18, name:"Торги по банкротству", cat:"Недвижимость",
+    risk:"Mid", strat:"Активная",
+    yieldLabel:"15–50%", yieldNum:25,
+    cap:20000, capLabel:"от 20 000 ₽",
+    status:"ok", statusLabel:"Больше лотов",
+    comment:"Высокая ставка = больше корпоративных банкротств = больше интересных лотов. Количество объектов на торгах выросло. Требует специальных знаний и времени. Для тех, кто готов учиться.",
+    tags:["Больше лотов в 2026","Дисконт к рынку","Требует экспертизы"],
+    score:65
+  },
+  {
+    id:19, name:"Флиппинг (ремонт + продажа)", cat:"Недвижимость",
+    risk:"Mid", strat:"Активная",
+    yieldLabel:"20–130%", yieldNum:35,
+    cap:1500000, capLabel:"от 1 500 000 ₽",
+    status:"warn", statusLabel:"Маржа под давлением",
+    comment:"Дорогая ипотека сокращает покупательский спрос, циклы продажи удлиняются. Работает только на ликвидных объектах с существенным дисконтом на входе. Для опытных.",
+    tags:["Длинные циклы 2026","Нужен большой дисконт","Опыт обязателен"],
+    score:42
+  },
+  {
+    id:20, name:"Авто для такси (аренда)", cat:"Транспорт",
+    risk:"Mid", strat:"Пассивная",
+    yieldLabel:"16–25%", yieldNum:20,
+    cap:200000, capLabel:"от 200 000 ₽",
+    status:"warn", statusLabel:"Маржа снижается",
+    comment:"Рост цен на авто снижает доходность на вложенный капитал. Интересен только при использовании кредитного плеча с правильным расчётом. Работает через таксопарки.",
+    tags:["Кредитное плечо","Материальный актив","Таксопарки"],
+    score:52
+  },
+  {
+    id:21, name:"Байки в Азии (аренда)", cat:"Транспорт",
+    risk:"Low", strat:"Пассивная",
+    yieldLabel:"20–35% в USD", yieldNum:27,
+    cap:300000, capLabel:"от 300 000 ₽",
+    status:"ok", statusLabel:"Валютный доход",
+    comment:"Устойчивый спрос на Бали и в Таиланде. Доход в USD защищает от девальвации рубля. Основной риск — надёжность управляющей компании. Нужен личный контроль или проверенная УК.",
+    tags:["Доход в USD","Бали / Таиланд","Валютный хедж"],
+    score:63
+  },
+  {
+    id:22, name:"Выкуп земли в СНТ", cat:"Земля",
+    risk:"Low", strat:"Активная",
+    yieldLabel:"30–1000%", yieldNum:100,
+    cap:30000, capLabel:"от 30 000 ₽",
+    status:"ok", statusLabel:"Нишевый",
+    comment:"Не зависит от ставки ЦБ и геополитики. Требует специальных знаний по земельному праву и времени на переговоры. Высокая доходность при минимальных вложениях — лучший ROI в категории.",
+    tags:["Минимальный капитал","Независимо от ЦБ","Специальные знания"],
+    score:67
+  },
+  {
+    id:23, name:"Загородный глэмпинг/аренда", cat:"Загородная недвижимость",
+    risk:"Low", strat:"Пассивная",
+    yieldLabel:"10–18%", yieldNum:14,
+    cap:200000, capLabel:"от 200 000 ₽",
+    status:"ok", statusLabel:"Туризм растёт",
+    comment:"Внутренний туризм стабильно растёт при ограниченном выездном. Доход от управляющей компании. А-фреймы и барнхаусы — в тренде. Важно выбирать надёжную УК.",
+    tags:["Внутренний туризм","Управляющая компания","Стабильный спрос"],
+    score:66
+  },
+  {
+    id:24, name:"Pre-IPO / IPO", cat:"Фондовый рынок",
+    risk:"High", strat:"Активная",
+    yieldLabel:"10%+ (до минуса)", yieldNum:30,
+    cap:100000, capLabel:"от 100 000 ₽",
+    status:"warn", statusLabel:"Строгий отбор",
+    comment:"Ожидается 10–12 IPO в РФ в 2026. Но многие IPO 2024–2025 торгуются ниже цены размещения. Строгий анализ каждой компании обязателен. Не более 5% портфеля на одно размещение.",
+    tags:["10–12 IPO в 2026","Высокий риск","Аналитика обязательна"],
+    score:45
+  },
+];
+
+// ===================== STATE =====================
+let selectedActivity = 'mixed';
+let allocChart = null;
+let activeFilter = 'Все';
+
+// ===================== INIT =====================
+document.querySelectorAll('.act-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.act-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedActivity = btn.dataset.val;
+  });
+});
+
+const ageSlider = document.getElementById('age');
+const ageVal = document.getElementById('age-val');
+const ageDesc = document.getElementById('age-desc');
+
+ageSlider.addEventListener('input', () => {
+  const age = parseInt(ageSlider.value);
+  ageVal.textContent = age;
+  updateAgeDesc(age);
+});
+
+function updateAgeDesc(age) {
+  const low = age;
+  const { mid, high } = calcRiskSplit(age);
+  ageDesc.textContent = `${low}% надёжные · ${mid}% средние · ${high}% рискованные`;
+}
+
+const amountInput = document.getElementById('amount');
+amountInput.addEventListener('input', updateAmountHint);
+
+function updateAmountHint() {
+  const v = parseInt(amountInput.value) || 0;
+  const hint = document.getElementById('amount-hint');
+  if (v < 10000) hint.textContent = '💡 Минимальная сумма для диверсификации — от 10 000 ₽';
+  else if (v < 100000) hint.textContent = '💡 Хватит на фондовый рынок и краудлендинг';
+  else if (v < 500000) hint.textContent = '💡 Хватит на большинство инструментов';
+  else if (v < 2000000) hint.textContent = '💡 Полная диверсификация доступна';
+  else hint.textContent = '💡 Доступны все инструменты включая займы под залог';
+}
+
+function calcRiskSplit(age) {
+  const low = Math.min(age, 85);
+  let high = 0;
+  if (age < 30) high = Math.round((100 - age) * 0.4);
+  else if (age < 45) high = Math.round((100 - age) * 0.25);
+  else if (age < 60) high = Math.round((100 - age) * 0.12);
+  else if (age < 70) high = Math.round((100 - age) * 0.05);
+  else high = 0;
+  const mid = 100 - low - high;
+  return { mid: Math.max(0, mid), high: Math.max(0, high) };
+}
+
+// ===================== CALCULATE =====================
+function calculate() {
+  const amount = parseInt(amountInput.value) || 100000;
+  const age = parseInt(ageSlider.value);
+  const activity = selectedActivity;
+
+  // Risk split
+  const lowPct = Math.min(age, 85);
+  const { mid: midPct, high: highPct } = calcRiskSplit(age);
+
+  // Filter instruments
+  let filtered = INSTRUMENTS.filter(ins => {
+    if (ins.cap > amount) return false;
+    if (activity === 'passive' && ins.strat === 'Активная') return false;
+    if (activity === 'mixed' && ins.strat === 'Активная') {
+      // allow some active if score is high
+      return false;
+    }
+    return true;
+  });
+
+  // If too few results, relax activity filter
+  if (filtered.length < 5) {
+    filtered = INSTRUMENTS.filter(ins => ins.cap <= amount);
+  }
+
+  // Score instruments
+  filtered = filtered.map(ins => {
+    let s = ins.score;
+    // Risk match bonus/penalty
+    if (highPct === 0 && ins.risk === 'High') s -= 30;
+    if (highPct < 10 && ins.risk === 'High') s -= 15;
+    if (lowPct > 60 && ins.risk === 'Low') s += 10;
+    if (highPct > 20 && ins.risk === 'High') s += 8;
+    // Activity match
+    if (activity === 'passive' && ins.strat === 'Пассивная') s += 10;
+    if (activity === 'active' && ins.strat === 'Активная') s += 8;
+    // Status
+    if (ins.status === 'hot') s += 12;
+    if (ins.status === 'bad') s -= 20;
+    return { ...ins, finalScore: Math.min(100, Math.max(0, s)) };
+  });
+
+  filtered.sort((a, b) => b.finalScore - a.finalScore);
+
+  renderResults(amount, age, activity, lowPct, midPct, highPct, filtered);
+}
+
+// ===================== RENDER =====================
+function renderResults(amount, age, activity, lowPct, midPct, highPct, instruments) {
+  document.getElementById('results').style.display = 'block';
+  setTimeout(() => document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+  // Chart
+  document.getElementById('chart-age-label').textContent = age;
+  renderChart(lowPct, midPct, highPct);
+
+  // Legend
+  const lowAmt = Math.round(amount * lowPct / 100);
+  const midAmt = Math.round(amount * midPct / 100);
+  const highAmt = Math.round(amount * highPct / 100);
+
+  document.getElementById('alloc-legend').innerHTML = [
+    { color: '#4CAF7D', name: 'Низкий риск', pct: lowPct, amt: lowAmt, pctColor: 'var(--green)' },
+    { color: '#E8944A', name: 'Средний риск', pct: midPct, amt: midAmt, pctColor: 'var(--amber)' },
+    { color: '#E85D5D', name: 'Высокий риск', pct: highPct, amt: highAmt, pctColor: 'var(--red)' },
+  ].map(r => `
+    <div class="legend-row">
+      <div style="display:flex;align-items:center;flex:1">
+        <div class="legend-dot" style="background:${r.color}"></div>
+        <span class="legend-name">${r.name}</span>
+      </div>
+      <div>
+        <div class="legend-pct" style="color:${r.pctColor}">${r.pct}%</div>
+        <div class="legend-amount">${fmtMoney(r.amt)}</div>
+      </div>
+    </div>`).join('');
+
+  // Profile text
+  const profileType = age < 35 ? 'Агрессивный' : age < 50 ? 'Умеренный' : age < 65 ? 'Консервативный' : 'Защитный';
+  const actLabels = { passive: 'Пассивный', mixed: 'Смешанный', active: 'Активный' };
+  const actLabel = actLabels[activity];
+
+  document.getElementById('profile-subtitle').textContent = `${profileType} инвестор · ${actLabel} подход · ${fmtMoney(amount)}`;
+
+  const profileTexts = {
+    low_passive: `Ваш приоритет — <strong>сохранение капитала</strong> с предсказуемым доходом. При текущей ставке ЦБ 15.5% консервативные инструменты дают отличную доходность. Идеальный момент зафиксировать высокие ставки в длинных облигациях.`,
+    low_mixed: `Разумный баланс между надёжностью и доходностью. При снижении ставки ЦБ длинные ОФЗ и дивидендные акции принесут хорошую доходность. Часть портфеля держите в ликвидных инструментах.`,
+    low_active: `Консервативная база + активные инструменты. Рассмотрите торги по банкротству и земельные стратегии — они не зависят от ставки ЦБ и дают высокий ROI при правильном подходе.`,
+    mid_passive: `Оптимальное сочетание риска и доходности. Снижение ставки ЦБ в 2026 — позитивный сигнал для акций и облигаций. Сейчас хороший момент для входа в длинные ОФЗ.`,
+    mid_mixed: `Ваш профиль позволяет получить широкую диверсификацию. Сочетайте надёжные облигации с дивидендными акциями и реальными активами. Геополитика — главный риск для акций РФ.`,
+    mid_active: `Активный подход при умеренном риске даёт доступ к лучшим возможностям: торги по банкротству, гаражи, земельные стратегии. Требует времени, но возможности в 2026 году расширились.`,
+    high_passive: `При высоком возрасте — акцент на <strong>сохранение</strong> и стабильный денежный поток. Фонды денежного рынка, ОФЗ, вклады и краудлендинг дают 13–17% без лишнего риска.`,
+    high_mixed: `Сохранение капитала в приоритете. Небольшая доля в реальных активах (гаражи, кладовки) добавит диверсификацию без биржевого риска. Избегайте волатильных инструментов.`,
+    high_active: `Даже при активном подходе — делайте акцент на проверенных инструментах с залогом. Займы под залог недвижимости дают 20–36% при минимальном риске.`,
+  };
+
+  const ageGroup = age < 40 ? 'low' : age < 60 ? 'mid' : 'high';
+  const key = `${ageGroup}_${activity}`;
+  document.getElementById('profile-text').innerHTML = profileTexts[key] || profileTexts['mid_mixed'];
+
+  // Tags
+  const tags = [];
+  if (lowPct >= 60) tags.push({ cls: 'tag-green', label: 'Консервативный' });
+  if (highPct >= 20) tags.push({ cls: 'tag-red', label: 'Агрессивный' });
+  if (midPct >= 40) tags.push({ cls: 'tag-amber', label: 'Умеренный' });
+  if (activity === 'passive') tags.push({ cls: 'tag-blue', label: 'Пассивный' });
+  if (activity === 'active') tags.push({ cls: 'tag-blue', label: 'Активный' });
+  if (amount >= 1000000) tags.push({ cls: 'tag-gold', label: 'Крупный инвестор' });
+  if (amount < 100000) tags.push({ cls: 'tag-blue', label: 'Начальный капитал' });
+  tags.push({ cls: 'tag-gold', label: 'Март 2026' });
+
+  document.getElementById('tags-row').innerHTML = tags.map(t => `<span class="tag ${t.cls}">${t.label}</span>`).join('');
+
+  // Stats
+  const topInst = instruments.slice(0, 5);
+  const avgYield = topInst.length ? Math.round(topInst.reduce((s, i) => s + i.yieldNum, 0) / topInst.length) : 0;
+  const potIncome = Math.round(amount * avgYield / 100);
+
+  document.getElementById('stat-grid').innerHTML = `
+    <div class="stat-box">
+      <div class="sb-label">Инструментов доступно</div>
+      <div class="sb-val">${instruments.length}</div>
+      <div class="sb-sub">из ${INSTRUMENTS.length} в базе</div>
+    </div>
+    <div class="stat-box">
+      <div class="sb-label">Средн. доходность топ-5</div>
+      <div class="sb-val" style="color:var(--green)">${avgYield}%</div>
+      <div class="sb-sub">по рекомендациям</div>
+    </div>
+    <div class="stat-box">
+      <div class="sb-label">Потенц. доход/год</div>
+      <div class="sb-val" style="color:var(--gold)">${fmtMoney(potIncome)}</div>
+      <div class="sb-sub">при сред. доходности</div>
+    </div>`;
+
+  // Filter tabs
+  const cats = ['Все', ...new Set(instruments.map(i => i.cat))];
+  activeFilter = 'Все';
+  document.getElementById('filter-tabs').innerHTML = cats.map(c =>
+    `<button class="ftab${c === 'Все' ? ' active' : ''}" onclick="setFilter('${c}', this)">${c}</button>`
+  ).join('');
+
+  // Instruments list
+  window._instruments = instruments;
+  renderInstruments(instruments, lowPct, midPct, highPct, amount);
+
+  // Show-all button
+  allShown = false;
+  const hiddenCount = INSTRUMENTS.length - instruments.length;
+  const showAllWrap = document.getElementById('show-all-wrap');
+  const showAllBtn = document.getElementById('show-all-btn');
+  document.getElementById('show-all-text').textContent = 'Показать все инвестиционные стратегии';
+  document.getElementById('show-all-count').textContent = `+${hiddenCount} стратегий`;
+  showAllBtn.classList.remove('expanded');
+  document.getElementById('all-extra-section')?.remove();
+  showAllWrap.style.display = hiddenCount > 0 ? 'block' : 'none';
+  document.getElementById('instruments-title').textContent = `Рекомендованные инструменты`;
+}
+
+function setFilter(cat, el) {
+  document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  activeFilter = cat;
+  const list = cat === 'Все' ? window._instruments : window._instruments.filter(i => i.cat === cat);
+  const age = parseInt(ageSlider.value);
+  const { mid, high } = calcRiskSplit(age);
+  renderInstruments(list, age, mid, high, parseInt(amountInput.value) || 100000);
+}
+
+function renderInstruments(instruments, lowPct, midPct, highPct, amount) {
+  const container = document.getElementById('instruments-list');
+  if (!instruments.length) {
+    container.innerHTML = `<div class="empty-state"><div class="e-icon">🔍</div><p>Нет подходящих инструментов для этого фильтра</p></div>`;
+    return;
+  }
+
+  const statusMap = {
+    hot: ['badge-hot', '★ '],
+    ok: ['badge-passive', ''],
+    warn: ['badge-mixed', ''],
+    bad: ['badge-high', ''],
+  };
+
+  const riskBadge = { Low: 'badge-low', Mid: 'badge-mid', High: 'badge-high' };
+  const riskLabel = { Low: 'Низкий риск', Mid: 'Средний риск', High: 'Высокий риск' };
+  const stratBadge = { 'Пассивная': 'badge-passive', 'Смешанная': 'badge-mixed', 'Активная': 'badge-active' };
+
+  container.innerHTML = instruments.map((ins, idx) => {
+    const [stCls, stPfx] = statusMap[ins.status] || ['badge-passive', ''];
+    const isTop = idx < 3;
+    const allocAmt = getRiskAlloc(ins.risk, lowPct, midPct, highPct, amount, instruments);
+
+    return `<div class="instr-card ${isTop ? 'top-pick' : ''}">
+      <div class="instr-rank ${isTop ? 'gold-rank' : ''}">#${idx + 1}</div>
+      <div class="instr-body">
+        <div class="instr-top">
+          <span class="instr-name">${ins.name}</span>
+          <span class="badge ${riskBadge[ins.risk]}">${riskLabel[ins.risk]}</span>
+          <span class="badge ${stratBadge[ins.strat] || 'badge-passive'}">${ins.strat}</span>
+          <span class="badge ${stCls}">${stPfx}${ins.statusLabel}</span>
+        </div>
+        <div class="instr-comment">${ins.comment}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+          ${ins.tags.map(t => `<span style="font-size:10px;padding:2px 8px;border-radius:4px;background:var(--bg3);color:var(--text3);border:1px solid var(--border)">${t}</span>`).join('')}
+        </div>
+      </div>
+      <div class="instr-right">
+        <div class="instr-yield">${ins.yieldLabel}</div>
+        <div class="instr-cap">${ins.capLabel}</div>
+        ${allocAmt > 0 ? `<div class="instr-alloc">≈ ${fmtMoney(allocAmt)}</div>` : ''}
+        <div class="score-bar-wrap">
+          <div style="font-size:10px;color:var(--text3);margin-top:8px">Соответствие</div>
+          <div class="score-bar"><div class="score-fill" style="width:${ins.finalScore || ins.score}%"></div></div>
+          <div style="font-size:10px;color:var(--text3);text-align:right">${ins.finalScore || ins.score}%</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function getRiskAlloc(risk, lowPct, midPct, highPct, totalAmount, allInstruments) {
+  const pct = risk === 'Low' ? lowPct : risk === 'Mid' ? midPct : highPct;
+  const countOfRisk = allInstruments.filter(i => i.risk === risk).length;
+  if (countOfRisk === 0) return 0;
+  const sharePerInstrument = 1 / Math.min(countOfRisk, 4);
+  return Math.round(totalAmount * (pct / 100) * sharePerInstrument);
+}
+
+// ===================== CHART =====================
+function renderChart(lowPct, midPct, highPct) {
+  const ctx = document.getElementById('allocChart').getContext('2d');
+  if (allocChart) allocChart.destroy();
+
+  allocChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Низкий риск', 'Средний риск', 'Высокий риск'],
+      datasets: [{
+        data: [lowPct, midPct, highPct],
+        backgroundColor: ['#4CAF7D', '#E8944A', '#E85D5D'],
+        borderColor: '#141824',
+        borderWidth: 4,
+        hoverBorderWidth: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '72%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.label}: ${ctx.raw}%`
+          }
+        }
+      },
+      animation: { duration: 800, easing: 'easeInOutQuart' }
+    }
+  });
+}
+
+// ===================== UTILS =====================
+function fmtMoney(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0', '') + ' млн ₽';
+  if (n >= 1000) return (n / 1000).toFixed(0) + ' тыс. ₽';
+  return n + ' ₽';
+}
+
+// ===================== BOOT =====================
+updateAgeDesc(parseInt(ageSlider.value));
+updateAmountHint();
+
+// ===================== SHOW ALL STRATEGIES =====================
+let allShown = false;
+
+function toggleAllStrategies() {
+  allShown = !allShown;
+  const btn = document.getElementById('show-all-btn');
+  const text = document.getElementById('show-all-text');
+
+  btn.classList.toggle('expanded', allShown);
+
+  if (allShown) {
+    text.textContent = 'Скрыть лишние стратегии';
+    renderAllStrategies();
+  } else {
+    text.textContent = 'Показать все инвестиционные стратегии';
+    document.getElementById('all-extra-section')?.remove();
+  }
+}
+
+function renderAllStrategies() {
+  const age = parseInt(ageSlider.value);
+  const amount = parseInt(amountInput.value) || 100000;
+  const { mid: midPct, high: highPct } = calcRiskSplit(age);
+  const lowPct = Math.min(age, 85);
+
+  const shown = new Set((window._instruments || []).map(i => i.id));
+  const hidden = INSTRUMENTS.filter(i => !shown.has(i.id));
+
+  // Remove old section if exists
+  document.getElementById('all-extra-section')?.remove();
+
+  if (!hidden.length) {
+    // All already shown — add a note
+    const note = document.createElement('div');
+    note.id = 'all-extra-section';
+    note.className = 'all-extra';
+    note.innerHTML = `<div class="all-section-label">Все доступные инструменты уже отображены выше</div>`;
+    document.getElementById('instruments-list').after(note);
+    return;
+  }
+
+  const statusMap = { hot:['badge-hot','★ '], ok:['badge-passive',''], warn:['badge-mixed',''], bad:['badge-high',''] };
+  const riskBadge = { Low:'badge-low', Mid:'badge-mid', High:'badge-high' };
+  const riskLabel = { Low:'Низкий риск', Mid:'Средний риск', High:'Высокий риск' };
+  const stratBadge = { 'Пассивная':'badge-passive', 'Смешанная':'badge-mixed', 'Активная':'badge-active' };
+
+  const reasonMap = i => {
+    const reasons = [];
+    if (i.cap > amount) reasons.push(`Минимальный капитал: ${fmtMoney(i.cap)}`);
+    if (selectedActivity === 'passive' && i.strat === 'Активная') reasons.push('Требует активного участия');
+    if (selectedActivity === 'mixed' && i.strat === 'Активная') reasons.push('Требует активного участия');
+    if (i.status === 'bad') reasons.push('Ограниченный доступ в РФ');
+    return reasons.length ? `<div style="font-size:11px;color:var(--amber);margin-top:6px">⚠ Не подходит: ${reasons.join(' · ')}</div>` : '';
+  };
+
+  const cards = hidden.map((ins, idx) => {
+    const [stCls, stPfx] = statusMap[ins.status] || ['badge-passive',''];
+    return `<div class="instr-card grayed all-extra">
+      <div class="instr-rank">#${(window._instruments?.length || 0) + idx + 1}</div>
+      <div class="instr-body">
+        <div class="instr-top">
+          <span class="instr-name">${ins.name}</span>
+          <span class="badge ${riskBadge[ins.risk]}">${riskLabel[ins.risk]}</span>
+          <span class="badge ${stratBadge[ins.strat]||'badge-passive'}">${ins.strat}</span>
+          <span class="badge ${stCls}">${stPfx}${ins.statusLabel}</span>
+        </div>
+        <div class="instr-comment">${ins.comment}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+          ${ins.tags.map(t=>`<span style="font-size:10px;padding:2px 8px;border-radius:4px;background:var(--bg3);color:var(--text3);border:1px solid var(--border)">${t}</span>`).join('')}
+        </div>
+        ${reasonMap(ins)}
+      </div>
+      <div class="instr-right">
+        <div class="instr-yield">${ins.yieldLabel}</div>
+        <div class="instr-cap">${ins.capLabel}</div>
+        <div class="score-bar-wrap">
+          <div style="font-size:10px;color:var(--text3);margin-top:8px">Соответствие</div>
+          <div class="score-bar"><div class="score-fill" style="width:${ins.score}%"></div></div>
+          <div style="font-size:10px;color:var(--text3);text-align:right">${ins.score}%</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const section = document.createElement('div');
+  section.id = 'all-extra-section';
+  section.className = 'all-extra';
+  section.innerHTML = `
+    <div class="all-section-label">Остальные стратегии — не вошли в подборку для вашего профиля</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">${cards}</div>`;
+
+  document.getElementById('show-all-wrap').before(section);
+}
+</script>
+</body>
+</html>
